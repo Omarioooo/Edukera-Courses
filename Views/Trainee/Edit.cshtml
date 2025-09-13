@@ -1,0 +1,69 @@
+﻿@model TraineeAddModelView
+@{
+    ViewData["Title"] = "Edit Trainee";
+    var departments = new SelectList(Model.Departments, "Id", "Name", Model.Trainee.DeptID);
+    SelectList grades = new SelectList(
+        new List<string> { "Excellent", "VeryGood", "Good", "Acceptable", "None" },
+        Model?.Trainee?.Grade
+    );
+}
+
+
+<section class="page-section" style="margin-top: 50px">
+    <div class="container">
+        <h1 class="text-uppercase text-center text-secondary mb-4">Edit Trainee</h1>
+
+        <div class="card shadow-lg mx-auto" style="max-width: 700px;">
+            <div class="card-body">
+                <form asp-controller="Trainee" asp-action="EditSave" method="post">
+                    <input type="hidden" name="Id" value="@Model.Trainee.Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="Trainee.Name" class="form-label"></label>
+                        <input asp-for="Trainee.Name" class="form-control" placeholder="Enter trainee name" />
+                        <span asp-validation-for="Trainee.Name" class="text-danger small"></span>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label asp-for="Trainee.Grade" class="form-label"></label>
+                        <select asp-for="Trainee.Grade"
+                                asp-items="grades"
+                                class="form-select">
+                            <option value="">-- Select Grade --</option>
+                        </select>
+                        <span asp-validation-for="Trainee.Grade" class="text-danger small"></span>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label asp-for="Trainee.Address" class="form-label"></label>
+                        <input asp-for="Trainee.Address" class="form-control" placeholder="Enter address" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Trainee.DeptID" class="form-label"></label>
+                        <select asp-for="Trainee.DeptID" class="form-select">
+                            <option value="">-- Select Department --</option>
+                            @foreach (var dep in Model?.Departments)
+                            {
+                                <option value="@dep.Id">@dep.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-controller="Trainee" asp-action="ShowAll"
+                           class="btn btn-secondary">
+                            ⬅ Back To List
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            💾 Save
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

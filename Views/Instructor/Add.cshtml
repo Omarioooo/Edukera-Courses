@@ -1,0 +1,79 @@
+﻿@model InstructorAddModelView
+@{
+    ViewData["Title"] = "Add Instructor";
+}
+
+<section class="page-section" style="margin-top: 50px">
+    <div class="container">
+        <h1 class="text-uppercase text-center text-secondary mb-4">Add Instructor</h1>
+
+        <div class="card shadow-lg mx-auto" style="max-width: 700px;">
+            <div class="card-body">
+                <form asp-controller="Instructor" asp-action="AddSave" method="post">
+
+                    <div class="mb-3">
+                        <label for="Name" class="form-label">Name</label>
+                        <input type="text" name="Instructor.Name" id="Name"
+                               value="@Model?.instructor?.Name"
+                               class="form-control" placeholder="Enter instructor name" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Salary" class="form-label">Salary</label>
+                        <input type="number" name="Instructor.Salary" id="Salary"
+                               value="@Model?.instructor?.Salary"
+                               class="form-control" placeholder="Enter salary" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="ImageURL" class="form-label">Image URL</label>
+                        <input type="text" name="Instructor.ImageURL" id="ImageURL"
+                               value="@Model?.instructor?.ImageURL"
+                               class="form-control" placeholder="Enter image path or URL" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Address" class="form-label">Address</label>
+                        <input type="text" name="Instructor.Address" id="Address"
+                               value="@Model?.instructor?.Address"
+                               class="form-control" placeholder="Enter address" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="DeptID" class="form-label">Department</label>
+                        <select name="Instructor.DeptID" id="DeptID" class="form-select">
+                            <option value="">-- Select Department --</option>
+                            @foreach (var dep in Model?.departments)
+                            {
+                                <option value="@dep.Id">@dep.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="CrsID" class="form-label">Course</label>
+                        <select name="Instructor.CrsID" id="CrsID" class="form-select">
+                            <option value="">-- Select Course --</option>
+                            @foreach (var crs in Model?.courses)
+                            {
+                                <option value="@crs.Id">@crs.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-controller="Instructor" asp-action="ShowAll"
+                           class="btn btn-secondary">
+                            ⬅ Back To List
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            💾 Save
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+

@@ -1,0 +1,50 @@
+﻿@model Instructore
+@{
+    ViewData["Title"] = "Details";
+}
+
+<section class="page-section" style="margin-top: 50px">
+    <div class="container">
+        <h1 class="text-uppercase text-center text-secondary mb-4">Instructor Details</h1>
+
+        <div class="card shadow-lg mx-auto" style="max-width: 700px;">
+            <div class="row g-0 align-items-center">
+                <!-- Image -->
+                <div class="col-md-4 text-center p-3">
+                    <img src="/images/@Model.ImageURL"
+                         alt="@Model.Name"
+                         class="img-fluid rounded-circle border"
+                         style="width: 180px; height: 180px; object-fit: cover;" />
+                </div>
+
+                <!-- Details -->
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h3 class="card-title mb-3">@Model.Name</h3>
+                        <p class="mb-1"><strong>ID:</strong> @Model.Id</p>
+                        <p class="mb-1"><strong>Salary:</strong> @Model.Salary</p>
+                        <p class="mb-1"><strong>Address:</strong> @Model.Address</p>
+                        <p class="mb-1"><strong>Department:</strong> @Model.Department.Name</p>
+                        <p class="mb-1"><strong>Course:</strong> @Model.Course.Name</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Btns -->
+        <div class="text-center mt-4">
+            <a asp-controller="Instructor"
+               asp-action="Edit"
+               asp-route-id="@Model.Id"
+               class="btn btn-warning btn-lg text-uppercase me-2 shadow">
+                ✏️ Edit
+            </a>
+
+            <a asp-controller="Instructor"
+               asp-action="ShowAll"
+               class="btn btn-secondary btn-lg text-uppercase shadow">
+                ⬅ Back to List
+            </a>
+        </div>
+    </div>
+</section>

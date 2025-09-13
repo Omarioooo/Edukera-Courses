@@ -1,0 +1,59 @@
+﻿@model CourseAddModelView
+@{
+    ViewData["Title"] = "Add Course";
+    var departments = new SelectList(Model.Departments, "Id", "Name", Model.Course.DeptID);
+}
+
+<section class="page-section" style="margin-top: 50px">
+    <div class="container">
+        <h1 class="text-uppercase text-center text-secondary mb-4">Add Course</h1>
+
+        <div class="card shadow-lg mx-auto" style="max-width: 700px;">
+            <div class="card-body">
+                <form asp-controller="Course" asp-action="AddSave" method="post">
+
+                    <div class="mb-3">
+                        <label asp-for="Course.Name" class="form-label"></label>
+                        <input asp-for="Course.Name"
+                               class="form-control"
+                               placeholder="Enter Course name" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Course.Degree" class="form-label"></label>
+                        <input asp-for="Course.Degree"
+                               class="form-control"
+                               placeholder="Enter Course Degree" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Course.MinDegree" class="form-label"></label>
+                        <input asp-for="Course.MinDegree"
+                               class="form-control"
+                               placeholder="Enter Course Min Degree" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Course.DeptID"></label>
+                        <select asp-for="Course.DeptID" asp-items="departments" class="form-select">
+                            <option value="">-- Select Department --</option>
+                        </select>
+                    </div>
+
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-controller="Instructor" asp-action="ShowAll"
+                           class="btn btn-secondary">
+                            ⬅ Back To List
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            💾 Save
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+

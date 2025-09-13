@@ -1,0 +1,55 @@
+﻿@model CourseDetailsModelView
+@{
+    ViewData["Title"] = "Details";
+}
+
+<style>
+    .col-md-8 {
+        flex: 0 0 auto;
+        width: 66.66666667%;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+</style>
+
+<section class="page-section" style="margin-top: 50px">
+    <div class="container">
+        <h1 class="text-uppercase text-center text-secondary mb-4">Course Details</h1>
+
+        <div class="card shadow-lg mx-auto" style="max-width: 500px">
+            <div class="row g-0 align-items-center">
+                <!-- Details -->
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h3 class="card-title mb-3">@Model.Name</h3>
+                        <p class="mb-1"><strong>ID:</strong> @Model.Id</p>
+                        <p class="mb-1"><strong>Degree:</strong> @Model.Degree</p>
+                        <p class="mb-1"><strong>Min Degree:</strong> @Model.MinDegree</p>
+                        <p class="mb-1"><strong>Instructors:</strong> @Model.NumOfInstructors</p>
+                        <p class="mb-1"><strong>Department:</strong> @Model.DepartmentName</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Btns -->
+        <div class="text-center mt-4">
+            <a asp-controller="Course"
+               asp-action="Edit"
+               asp-route-id="@Model.Id"
+               class="btn btn-warning btn-lg text-uppercase me-2 shadow">
+                ✏️ Edit
+            </a>
+
+            <a asp-controller="Course"
+               asp-action="ShowAll"
+               class="btn btn-secondary btn-lg text-uppercase shadow">
+                ⬅ Back to List
+            </a>
+        </div>
+    </div>
+</section>
