@@ -57,14 +57,14 @@ namespace MVC_Demo.Controllers
         public IActionResult Details(int id)
         {
             var model = DbContext.Courses
-                .Include(crs => crs.instructores)
+                .Include(crs => crs.Instructores)
                 .Select(crs => new CourseDetailsModelView()
                 {
                     Id = crs.Id,
                     Name = crs.Name,
                     Degree = crs.Degree,
                     MinDegree = crs.MinDegree,
-                    NumOfInstructors = crs.instructores.Count(),
+                    NumOfInstructors = crs.Instructores.Count(),
                     DepartmentName = crs.Department.Name
                 })
                 .FirstOrDefault(crs => crs.Id == id);
@@ -110,6 +110,36 @@ namespace MVC_Demo.Controllers
             }
 
             return View("Edit", courseRequest);
+        }
+
+        public IActionResult Delete(int Id)
+        {
+            var course = DbContext.Courses
+                .FirstOrDefault(c => c.Id == Id);
+
+            if (course != null)
+            {
+                // Delete related instructors
+                var instructors = DbContext.Instructores
+                    .Where(inst => inst.Course.Id == Id)
+                    .ToList();
+                DbContext.Instructores.RemoveRange(instructors);
+
+                // Delete related results
+                var results = DbContext.Results
+                    .Where(rs => rs.Course.Id == Id)
+                    .ToList();
+                DbContext.Results.RemoveRange(results);
+
+                // Delete the course itself
+                DbContext.Courses.Remove(course);
+
+                // Save all changes
+                DbContext.SaveChanges();
+
+                return RedirectToAction("ShowAll");
+            }
+            return RedirectToAction("Details", new { Id });
         }
     }
 }

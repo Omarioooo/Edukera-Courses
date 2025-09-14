@@ -1,6 +1,7 @@
 ﻿@model CourseDetailsModelView
 @{
     ViewData["Title"] = "Details";
+    ViewData["ControllerName"] = "Course";
 }
 
 <style>
@@ -39,16 +40,22 @@
         <!-- Btns -->
         <div class="text-center mt-4">
             <a asp-controller="Course"
-               asp-action="Edit"
-               asp-route-id="@Model.Id"
-               class="btn btn-warning btn-lg text-uppercase me-2 shadow">
-                ✏️ Edit
+                asp-action="ShowAll"
+                class="btn btn-secondary btn-lg text-uppercase shadow">
+                Back to List
             </a>
 
+            <button type="button"
+                    class="btn btn-danger btn-lg text-uppercase shadow"
+                    onclick="confirmDelete(@Model.Id, '@ViewData["ControllerName"]')">
+                Delete
+            </button>
+
             <a asp-controller="Course"
-               asp-action="ShowAll"
-               class="btn btn-secondary btn-lg text-uppercase shadow">
-                ⬅ Back to List
+                asp-action="Edit"
+                asp-route-id="@Model.Id"
+                class="btn btn-warning btn-lg text-uppercase me-2 shadow">
+                Edit
             </a>
         </div>
     </div>

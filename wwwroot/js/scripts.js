@@ -52,3 +52,49 @@ window.addEventListener('DOMContentLoaded', event => {
     });
 
 });
+
+function confirmUpdate() {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you want to save these changes?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, save',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // find the update form and submit it
+            var form = document.querySelector('form'); // adjust selector if needed
+            form.submit();
+        }
+    });
+}
+function confirmDelete(id, controller) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to undo this action!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var form = document.createElement('form');
+            form.method = 'post';
+            form.action = '/' + controller + '/Delete/' + id;
+
+            // Add anti-forgery token if present
+            var token = document.querySelector('input[name="__RequestVerificationToken"]');
+            if (token) {
+                var hiddenToken = document.createElement('input');
+                hiddenToken.type = 'hidden';
+                hiddenToken.name = '__RequestVerificationToken';
+                hiddenToken.value = token.value;
+                form.appendChild(hiddenToken);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+}

@@ -1,5 +1,17 @@
+wwwroot\assets\favicon.ico
+wwwroot\assets\img\avataaars.svg
+wwwroot\assets\img\portfolio\cabin.png
+wwwroot\assets\img\portfolio\cake.png
+wwwroot\assets\img\portfolio\circus.png
+wwwroot\assets\img\portfolio\game.png
+wwwroot\assets\img\portfolio\safe.png
+wwwroot\assets\img\portfolio\submarine.png
 wwwroot\css\site.css
+wwwroot\css\styles.css
 wwwroot\favicon.ico
+wwwroot\images\boy.png
+wwwroot\images\company.jpg
+wwwroot\js\scripts.js
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
@@ -61,18 +73,6 @@ wwwroot\lib\jquery\dist\jquery.slim.js
 wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
-wwwroot\images\boy.png
-wwwroot\images\company.jpg
-wwwroot\assets\favicon.ico
-wwwroot\assets\img\avataaars.svg
-wwwroot\assets\img\portfolio\cabin.png
-wwwroot\assets\img\portfolio\cake.png
-wwwroot\assets\img\portfolio\circus.png
-wwwroot\assets\img\portfolio\game.png
-wwwroot\assets\img\portfolio\safe.png
-wwwroot\assets\img\portfolio\submarine.png
-wwwroot\css\styles.css
-wwwroot\js\scripts.js
 E:\Visual Studio\MVCs\MVC-Demo\wwwroot\css\site.css
 E:\Visual Studio\MVCs\MVC-Demo\wwwroot\favicon.ico
 E:\Visual Studio\MVCs\MVC-Demo\wwwroot\js\site.js

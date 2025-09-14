@@ -165,7 +165,7 @@ namespace MVC_Demo.Migrations
             modelBuilder.Entity("MVC_Demo.Models.Course", b =>
                 {
                     b.HasOne("MVC_Demo.Models.Department", "Department")
-                        .WithMany()
+                        .WithMany("Courses")
                         .HasForeignKey("DeptID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -195,13 +195,13 @@ namespace MVC_Demo.Migrations
             modelBuilder.Entity("MVC_Demo.Models.Instructore", b =>
                 {
                     b.HasOne("MVC_Demo.Models.Course", "Course")
-                        .WithMany("instructores")
+                        .WithMany("Instructores")
                         .HasForeignKey("CrsID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MVC_Demo.Models.Department", "Department")
-                        .WithMany()
+                        .WithMany("Instructores")
                         .HasForeignKey("DeptID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -214,7 +214,7 @@ namespace MVC_Demo.Migrations
             modelBuilder.Entity("MVC_Demo.Models.Trainee", b =>
                 {
                     b.HasOne("MVC_Demo.Models.Department", "Department")
-                        .WithMany()
+                        .WithMany("Trainees")
                         .HasForeignKey("DeptID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -224,9 +224,18 @@ namespace MVC_Demo.Migrations
 
             modelBuilder.Entity("MVC_Demo.Models.Course", b =>
                 {
-                    b.Navigation("Results");
+                    b.Navigation("Instructores");
 
-                    b.Navigation("instructores");
+                    b.Navigation("Results");
+                });
+
+            modelBuilder.Entity("MVC_Demo.Models.Department", b =>
+                {
+                    b.Navigation("Courses");
+
+                    b.Navigation("Instructores");
+
+                    b.Navigation("Trainees");
                 });
 
             modelBuilder.Entity("MVC_Demo.Models.Trainee", b =>

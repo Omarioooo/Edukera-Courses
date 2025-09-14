@@ -334,4 +334,5 @@ E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\ref\MVC-Demo.dll
 E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\compressed\1g8f8voqg7-devepoo3hg.gz
 E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\compressed\t0eqqt1ryy-z1gv136zx9.gz
 E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\compressed\ytm1lcntqk-69w57k644l.gz
-E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\compressed\os8w0fbj2q-n86y5v0x90.gz
+E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\MVC-Demo.sourcelink.json
+E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\compressed\os8w0fbj2q-lqikusyfho.gz

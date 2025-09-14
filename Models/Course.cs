@@ -14,12 +14,12 @@ namespace MVC_Demo.Models
         public int MinDegree { get; set; }
 
         [ForeignKey("Department")]
-        [Display(Name ="Department")]
+        [Display(Name = "Department")]
         public int DeptID { get; set; }
 
-        public Department Department { get; set; }
+        public Department? Department { get; set; }
 
-        public List<Instructore> instructores { get; set; }
-        public List<CourseResult> Results { get; set; }
+        public List<Instructore>? Instructores { get; set; }
+        public List<CourseResult>? Results { get; set; }
     }
 }

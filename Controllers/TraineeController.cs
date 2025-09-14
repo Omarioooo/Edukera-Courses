@@ -111,5 +111,26 @@ namespace MVC_Demo.Controllers
 
             return View("Edit", modelRequest);
         }
+
+        public IActionResult Delete(int Id)
+        {
+            var trainee = DbContext.Trainees.FirstOrDefault(tr => tr.Id == Id);
+
+            if (trainee != null)
+            {
+                // Remoce Related Results
+                var results = DbContext.Results
+                    .Where(rs => rs.TraineeID == Id)
+                    .ToList();
+                DbContext.RemoveRange(results);
+
+                // Remove Course it Self
+                DbContext.Trainees.Remove(trainee);
+
+                return RedirectToAction("ShowAll");
+            }
+
+            return RedirectToAction("Details", new { Id });
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿@model Instructore
 @{
     ViewData["Title"] = "Details";
+    ViewData["ControllerName"] = "Instructor";
 }
 
 <section class="page-section" style="margin-top: 50px">
@@ -34,16 +35,20 @@
         <!-- Btns -->
         <div class="text-center mt-4">
             <a asp-controller="Instructor"
+               asp-action="ShowAll"
+               class="btn btn-secondary btn-lg text-uppercase shadow">
+                Back to List
+            </a>
+
+            <button type="button" class="btn btn-danger btn-lg text-uppercase shadow" onclick="confirmDelete(@Model.Id, @ViewData["ControllerName"])">
+                Delete
+            </button>
+
+            <a asp-controller="Instructor"
                asp-action="Edit"
                asp-route-id="@Model.Id"
                class="btn btn-warning btn-lg text-uppercase me-2 shadow">
-                ✏️ Edit
-            </a>
-
-            <a asp-controller="Instructor"
-               asp-action="ShowAll"
-               class="btn btn-secondary btn-lg text-uppercase shadow">
-                ⬅ Back to List
+                Edit
             </a>
         </div>
     </div>

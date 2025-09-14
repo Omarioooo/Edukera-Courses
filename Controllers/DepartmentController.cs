@@ -83,5 +83,41 @@ namespace MVC_Demo.Controllers
             }
             return View("Edit", departmentRequest);
         }
+
+        public IActionResult Delete(int Id)
+        {
+            var department = DbContext.Departments.FirstOrDefault(dept => dept.Id == Id);
+
+            if (department != null)
+            {
+                // Remove Related Instructor
+                var instructors = DbContext.Instructores
+                    .Where(inst => inst.DeptID == Id)
+                    .ToList();
+                DbContext.RemoveRange(instructors);
+
+                // Remove Related Trainees
+                var trainees = DbContext.Trainees
+                    .Where(tr => tr.DeptID == Id)
+                    .ToList();
+                DbContext.RemoveRange(trainees);
+
+                // Remove Realated Coureses
+                var courses = DbContext.Courses
+                    .Where(crs => crs.DeptID == Id)
+                    .ToList();
+                DbContext.RemoveRange(courses);
+
+                // Remove Course itself
+                DbContext.Remove(department);
+
+                // Save all changes
+                DbContext.SaveChanges();
+
+                return RedirectToAction("ShowAll");
+            }
+
+            return RedirectToAction("Details", new { Id });
+        }
     }
 }

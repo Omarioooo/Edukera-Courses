@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using MVC_Demo.Models;
 using MVC_Demo.ModelView;
@@ -109,6 +110,22 @@ namespace MVC_Demo.Controllers
 
             instructorRequest.instructor = instructor;
             return View("Edit", instructorRequest);
+        }
+
+        public IActionResult Delete(int Id)
+        {
+            var instructor = DbContext.Instructores.FirstOrDefault(inst => inst.Id == Id);
+
+            if (instructor != null)
+            {
+                DbContext.Instructores.Remove(instructor);
+
+                // Save all changes
+                DbContext.SaveChanges();
+
+                return RedirectToAction("ShowAll");
+            }
+            return RedirectToAction("Details", new { Id });
         }
     }
 }
