@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MVC_Demo.Models;
 using MVC_Demo.ModelView;
 
@@ -9,11 +10,10 @@ namespace MVC_Demo.Controllers
     {
 
         Context DbContext = new Context();
-        private object course;
 
-        public IActionResult ShowAll()
+        public IActionResult ShowAll(string? search)
         {
-            List<CourseDetailsModelView> courses = DbContext.Courses
+            var coursesQuery = DbContext.Courses
                 .Include(crs => crs.Department)
                 .Select(crs => new CourseDetailsModelView
                 {
@@ -22,10 +22,18 @@ namespace MVC_Demo.Controllers
                     Degree = crs.Degree,
                     MinDegree = crs.MinDegree,
                     DepartmentName = crs.Department.Name
-                })
-                .ToList();
+                });
 
+            if (!search.IsNullOrEmpty())
+            {
+                var coursesList = coursesQuery
+                     .Where(crs => crs.Name.StartsWith(search))
+                     .ToList();
 
+                return View(coursesList);
+            }
+
+            var courses = coursesQuery.ToList();
             return View(courses);
         }
 

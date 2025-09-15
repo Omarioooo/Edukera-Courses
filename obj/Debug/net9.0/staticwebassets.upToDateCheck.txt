@@ -73,8 +73,12 @@ wwwroot\lib\jquery\dist\jquery.slim.js
 wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
+E:\Visual Studio\MVCs\MVC-Demo\wwwroot\assets\favicon.ico
+E:\Visual Studio\MVCs\MVC-Demo\wwwroot\assets\img\avataaars.svg
 E:\Visual Studio\MVCs\MVC-Demo\wwwroot\css\site.css
+E:\Visual Studio\MVCs\MVC-Demo\wwwroot\css\styles.css
 E:\Visual Studio\MVCs\MVC-Demo\wwwroot\favicon.ico
+E:\Visual Studio\MVCs\MVC-Demo\wwwroot\js\scripts.js
 E:\Visual Studio\MVCs\MVC-Demo\wwwroot\js\site.js
 E:\Visual Studio\MVCs\MVC-Demo\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 E:\Visual Studio\MVCs\MVC-Demo\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
@@ -135,7 +139,3 @@ E:\Visual Studio\MVCs\MVC-Demo\wwwroot\lib\jquery\dist\jquery.slim.js
 E:\Visual Studio\MVCs\MVC-Demo\wwwroot\lib\jquery\dist\jquery.slim.min.js
 E:\Visual Studio\MVCs\MVC-Demo\wwwroot\lib\jquery\dist\jquery.slim.min.map
 E:\Visual Studio\MVCs\MVC-Demo\wwwroot\lib\jquery\LICENSE.txt
-E:\Visual Studio\MVCs\MVC-Demo\wwwroot\assets\favicon.ico
-E:\Visual Studio\MVCs\MVC-Demo\wwwroot\assets\img\avataaars.svg
-E:\Visual Studio\MVCs\MVC-Demo\wwwroot\css\styles.css
-E:\Visual Studio\MVCs\MVC-Demo\wwwroot\js\scripts.js

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MVC_Demo.Models;
 using MVC_Demo.ModelView;
 
@@ -10,9 +11,9 @@ namespace MVC_Demo.Controllers
     {
         Context DbContext = new Context();
 
-        public IActionResult ShowAll()
+        public IActionResult ShowAll(string? search)
         {
-            var instructors = DbContext.Instructores
+            var instructorsQuery = DbContext.Instructores
                 .Include(inst => inst.Department)
                 .Select(inst => new InstructorShowAllModelView
                 {
@@ -21,8 +22,18 @@ namespace MVC_Demo.Controllers
                     ImageURL = inst.ImageURL,
                     DepartmentName = inst.Department.Name
                 })
-                .ToList();
+                .AsQueryable();
 
+            if (!search.IsNullOrEmpty())
+            {
+                var instructorsList = instructorsQuery
+                    .Where(inst => inst.Name.StartsWith(search))
+                    .ToList();
+
+                return View(instructorsList);
+            }
+
+            var instructors = instructorsQuery.ToList();
             return View(instructors);
         }
 

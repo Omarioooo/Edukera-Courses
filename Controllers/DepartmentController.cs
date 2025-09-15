@@ -9,9 +9,16 @@ namespace MVC_Demo.Controllers
     {
         Context DbContext = new Context();
 
-        public IActionResult ShowAll()
+        public IActionResult ShowAll(string? search)
         {
-            var departments = DbContext.Departments.Select(dept => dept).ToList();
+            var query = DbContext.Departments.AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(dept => dept.Name.StartsWith(search));
+            }
+
+            var departments = query.ToList();
             return View(departments);
         }
 

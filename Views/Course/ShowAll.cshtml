@@ -7,6 +7,18 @@
     <div class="container">
         <h1 class="text-uppercase text-center text-secondary mb-4" style="margin-top: 50px">Courses</h1>
 
+        <!-- Search Bar -->
+        <form method="get" asp-controller="Course" asp-action="ShowAll" class="mb-4">
+            <div class="input-group shadow">
+                <input type="text" name="search" value="@Context.Request.Query["search"]"
+                       class="form-control form-control-lg"
+                       placeholder="Search for course..." />
+                <button class="btn btn-primary btn-lg text-uppercase" type="submit">
+                    Search
+                </button>
+            </div>
+        </form>
+
         <table class="table table-striped table-hover table-bordered align-middle text-center shadow">
             <thead class="table-dark">
                 <tr>
