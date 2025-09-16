@@ -1,4 +1,4 @@
-﻿@model List<InstructorShowAllModelView>
+﻿@model List<InstructorDetailsViewModel>
 @{
     ViewData["Title"] = "Show All Instructors";
 }
@@ -33,7 +33,7 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@item.ID</td>
+                        <td>@item.Id</td>
                         <td>@item.Name</td>
                         <td>@item.DepartmentName</td>
                         <td>
@@ -46,7 +46,7 @@
                             <a class="btn btn-sm btn-primary text-uppercase"
                                asp-controller="Instructor"
                                asp-action="Details"
-                               asp-route-id="@item.ID">
+                               asp-route-id="@item.Id">
                                 Show Details
                             </a>
                         </td>

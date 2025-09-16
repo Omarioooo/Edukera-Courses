@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MVC_Demo.Models;
-using MVC_Demo.ModelView;
+using MVC_Demo.Repository;
+using MVC_Demo.ViewModels;
 
 namespace MVC_Demo.Controllers
 {
@@ -30,7 +31,7 @@ namespace MVC_Demo.Controllers
         [HttpPost]
         public IActionResult AddSave(Department departmentRequest)
         {
-            if (departmentRequest.Name != null && departmentRequest.ManagerName != null)
+            if (ModelState.IsValid)
             {
                 DbContext.Departments.Add(departmentRequest);
                 DbContext.SaveChanges();
@@ -50,7 +51,7 @@ namespace MVC_Demo.Controllers
               .FirstOrDefault(dept => dept.Id == Id);
 
 
-            var departmentModel = new DepartmentDetailsModelView()
+            var departmentModel = new DepartmentDetailsViewModel()
             {
                 Id = department.Id,
                 Name = department.Name,
@@ -78,7 +79,7 @@ namespace MVC_Demo.Controllers
         [HttpPost]
         public IActionResult Editsave(int Id, Department departmentRequest)
         {
-            if (departmentRequest.Name != null && departmentRequest.ManagerName != null)
+            if (ModelState.IsValid)
             {
                 var departmentDB = DbContext.Departments.FirstOrDefault(dept => dept.Id == Id);
                 departmentDB.Name = departmentRequest.Name;

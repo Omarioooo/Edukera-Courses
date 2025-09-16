@@ -1,10 +1,10 @@
-﻿@model TraineeAddModelView
+﻿@model TraineeFormViewModel
 @{
     ViewData["Title"] = "Edit Trainee";
-    var departments = new SelectList(Model.Departments, "Id", "Name", Model.Trainee.DeptID);
+    var departments = new SelectList(Model.Departments, "Id", "Name", Model.DeptID);
     SelectList grades = new SelectList(
         new List<string> { "Excellent", "VeryGood", "Good", "Acceptable", "None" },
-        Model?.Trainee?.Grade
+        Model?.Grade
     );
 }
 
@@ -16,34 +16,34 @@
         <div class="card shadow-lg mx-auto" style="max-width: 700px;">
             <div class="card-body">
                 <form asp-controller="Trainee" asp-action="EditSave" method="post">
-                    <input type="hidden" name="Id" value="@Model.Trainee.Id" />
+                    <input type="hidden" asp-for="Id" />
 
                     <div class="mb-3">
-                        <label asp-for="Trainee.Name" class="form-label"></label>
-                        <input asp-for="Trainee.Name" class="form-control" placeholder="Enter trainee name" />
-                        <span asp-validation-for="Trainee.Name" class="text-danger small"></span>
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" placeholder="Enter trainee name" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
                     </div>
 
 
                     <div class="mb-3">
-                        <label asp-for="Trainee.Grade" class="form-label"></label>
-                        <select asp-for="Trainee.Grade"
+                        <label asp-for="Grade" class="form-label"></label>
+                        <select asp-for="Grade"
                                 asp-items="grades"
                                 class="form-select">
                             <option value="">-- Select Grade --</option>
                         </select>
-                        <span asp-validation-for="Trainee.Grade" class="text-danger small"></span>
+                        <span asp-validation-for="Grade" class="text-danger small"></span>
                     </div>
 
 
                     <div class="mb-3">
-                        <label asp-for="Trainee.Address" class="form-label"></label>
-                        <input asp-for="Trainee.Address" class="form-control" placeholder="Enter address" />
+                        <label asp-for="Address" class="form-label"></label>
+                        <input asp-for="Address" class="form-control" placeholder="Enter address" />
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="Trainee.DeptID" class="form-label"></label>
-                        <select asp-for="Trainee.DeptID" class="form-select">
+                        <label asp-for="DeptID" class="form-label"></label>
+                        <select asp-for="DeptID" class="form-select">
                             <option value="">-- Select Department --</option>
                             @foreach (var dep in Model?.Departments)
                             {
@@ -55,13 +55,12 @@
                     <div class="d-flex justify-content-between mt-4">
                         <a asp-controller="Trainee" asp-action="ShowAll"
                            class="btn btn-secondary">
-                            ⬅ Back To List
+                            Back To List
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            💾 Save
+                            Save
                         </button>
                     </div>
-
                 </form>
             </div>
         </div>

@@ -11,7 +11,7 @@ namespace MVC_Demo.Models
         [ForeignKey("Course")]
         public int CrsID { get; set; }
 
-        [ForeignKey("Trainees")]
+        [ForeignKey("Trainee")]
         public int TraineeID { get; set; }
 
         public Trainee? Trainee { get; set; }

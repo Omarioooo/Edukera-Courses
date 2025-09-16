@@ -53,6 +53,54 @@ window.addEventListener('DOMContentLoaded', event => {
 
 });
 
+// Upload Trainee Photo
+// Get references to DOM elements
+const dropArea = document.getElementById("drop-area");
+const fileInput = document.getElementById("fileElem");
+const preview = document.getElementById("preview");
+
+// Prevent default behavior when dragging a file over the area
+dropArea.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropArea.classList.add("bg-light"); // highlight drop area
+});
+
+// Remove highlight when drag leaves the area
+dropArea.addEventListener("dragleave", () => {
+    dropArea.classList.remove("bg-light");
+});
+
+// Handle file drop
+dropArea.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropArea.classList.remove("bg-light");
+
+    // Attach dropped file(s) to the hidden file input
+    fileInput.files = e.dataTransfer.files;
+
+    // Show preview of the first image file
+    if (fileInput.files.length > 0) {
+        showPreview(fileInput.files[0]);
+    }
+});
+
+// Handle file selection from dialog
+fileInput.addEventListener("change", () => {
+    if (fileInput.files.length > 0) {
+        showPreview(fileInput.files[0]);
+    }
+});
+
+// Function to show image preview
+function showPreview(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        preview.src = e.target.result;
+        preview.style.display = "block";
+    };
+    reader.readAsDataURL(file); // Convert file to base64 for preview
+}
+
 function confirmUpdate() {
     Swal.fire({
         title: 'Are you sure?',

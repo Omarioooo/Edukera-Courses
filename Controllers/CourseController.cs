@@ -2,7 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MVC_Demo.Models;
-using MVC_Demo.ModelView;
+using MVC_Demo.Repository;
+using MVC_Demo.ViewModels;
 
 namespace MVC_Demo.Controllers
 {
@@ -15,7 +16,7 @@ namespace MVC_Demo.Controllers
         {
             var coursesQuery = DbContext.Courses
                 .Include(crs => crs.Department)
-                .Select(crs => new CourseDetailsModelView
+                .Select(crs => new CourseDetailsViewModel
                 {
                     Id = crs.Id,
                     Name = crs.Name,
@@ -39,9 +40,8 @@ namespace MVC_Demo.Controllers
 
         public IActionResult Add()
         {
-            var model = new CourseAddModelView
+            var model = new CourseFormViewModel
             {
-                Course = new Course(),
                 Departments = DbContext.Departments.ToList()
             };
 
@@ -50,15 +50,25 @@ namespace MVC_Demo.Controllers
 
 
         [HttpPost]
-        public IActionResult AddSave(CourseAddModelView courseRequest)
+        public IActionResult AddSave(CourseFormViewModel courseRequest)
         {
-            if (courseRequest.Course.Name != null)
+            if (ModelState.IsValid)
             {
-                DbContext.Courses.Add(courseRequest.Course);
+                var course = new Course()
+                {
+                    Name = courseRequest.Name,
+                    Degree = courseRequest.Degree,
+                    MinDegree = courseRequest.MinDegree,
+                    DeptID = courseRequest.DeptID,
+                };
+                DbContext.Courses.Add(course);
+
                 DbContext.SaveChanges();
 
                 return RedirectToAction("ShowAll");
             }
+
+            courseRequest.Departments = DbContext.Departments.ToList();
             return View("Add", courseRequest);
         }
 
@@ -66,7 +76,7 @@ namespace MVC_Demo.Controllers
         {
             var model = DbContext.Courses
                 .Include(crs => crs.Instructores)
-                .Select(crs => new CourseDetailsModelView()
+                .Select(crs => new CourseDetailsViewModel()
                 {
                     Id = crs.Id,
                     Name = crs.Name,
@@ -88,9 +98,13 @@ namespace MVC_Demo.Controllers
                 return NotFound();
             }
 
-            var model = new CourseAddModelView
+            var model = new CourseFormViewModel
             {
-                Course = course,
+                Id = course.Id,
+                Name = course.Name,
+                Degree = course.Degree,
+                MinDegree = course.MinDegree,
+                DeptID = course.DeptID,
                 Departments = DbContext.Departments.ToList()
             };
 
@@ -98,7 +112,7 @@ namespace MVC_Demo.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditSave(int Id, CourseAddModelView courseRequest)
+        public IActionResult EditSave(int Id, CourseFormViewModel courseRequest)
         {
             var courseDB = DbContext.Courses.FirstOrDefault(crs => crs.Id == Id);
             if (courseDB == null)
@@ -106,17 +120,18 @@ namespace MVC_Demo.Controllers
                 return NotFound();
             }
 
-            if (courseRequest.Course.Name != null)
+            if (ModelState.IsValid)
             {
-                courseDB.Name = courseRequest.Course.Name;
-                courseDB.Degree = courseRequest.Course.Degree;
-                courseDB.MinDegree = courseRequest.Course.MinDegree;
-                courseDB.DeptID = courseRequest.Course.DeptID;
+                courseDB.Name = courseRequest.Name;
+                courseDB.Degree = courseRequest.Degree;
+                courseDB.MinDegree = courseRequest.MinDegree;
+                courseDB.DeptID = courseRequest.DeptID;
                 DbContext.SaveChanges();
 
                 return RedirectToAction("Details", new { Id });
             }
 
+            courseRequest.Departments = DbContext.Departments.ToList();
             return View("Edit", courseRequest);
         }
 

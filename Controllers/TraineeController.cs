@@ -2,7 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MVC_Demo.Models;
-using MVC_Demo.ModelView;
+using MVC_Demo.Repository;
+using MVC_Demo.ViewModels;
 
 namespace MVC_Demo.Controllers
 {
@@ -15,12 +16,13 @@ namespace MVC_Demo.Controllers
 
             var traineesQuery = DbContext.Trainees
                 .Include(tr => tr.Department)
-                .Select(tr => new TraineeShowAllModelView
+                .Select(tr => new TraineeDetailsViewModel
                 {
                     Id = tr.Id,
                     Name = tr.Name,
                     Address = tr.Address,
                     ImageURL = tr.ImageURL,
+                    Grade = tr.Grade,
                     DepartmentName = tr.Department.Name
                 })
                 .AsQueryable();
@@ -38,45 +40,44 @@ namespace MVC_Demo.Controllers
             return View(trainees);
         }
 
-        public IActionResult Add(TraineeAddModelView traineeRequest)
+        public IActionResult Add()
         {
             var departments = DbContext.Departments.ToList();
-            traineeRequest.Departments = departments;
-
-            return View(traineeRequest);
+            ViewBag.Departments = departments;
+            return View();
         }
 
 
         [HttpPost]
-        public IActionResult AddSave(TraineeAddModelView traineeRequest)
+        public IActionResult AddSave(TraineeFormViewModel traineeRequest)
         {
-            if (traineeRequest.Trainee?.Name == null)
+            if (ModelState.IsValid)
             {
-                traineeRequest.Departments = DbContext.Departments.ToList();
-                return View("Add", traineeRequest);
+                // Add new trainee
+                var newTrainee = new Trainee
+                {
+                    Name = traineeRequest.Name,
+                    Address = traineeRequest.Address,
+                    DeptID = traineeRequest.DeptID,
+                    Grade = traineeRequest.Grade,
+                    ImageURL = traineeRequest.ImageURL
+                };
+
+                DbContext.Trainees.Add(newTrainee);
+                DbContext.SaveChanges();
+
+                return RedirectToAction("ShowAll");
             }
 
-            // Add new trainee
-            var newTrainee = new Trainee
-            {
-                Name = traineeRequest.Trainee.Name,
-                Address = traineeRequest.Trainee.Address,
-                DeptID = traineeRequest.Trainee.DeptID,
-                Grade = traineeRequest.Trainee.Grade,
-                ImageURL = traineeRequest.Trainee.ImageURL
-            };
-
-            DbContext.Trainees.Add(newTrainee);
-            DbContext.SaveChanges();
-
-            return RedirectToAction("ShowAll");
+            traineeRequest.Departments = DbContext.Departments.ToList();
+            return View("Add", traineeRequest);
         }
 
         public IActionResult Details(int id)
         {
             var traineeModel = DbContext.Trainees
                 .Include(tr => tr.Department)
-                .Select(tr => new TraineeDetailsModelView
+                .Select(tr => new TraineeDetailsViewModel
                 {
                     Id = tr.Id,
                     Name = tr.Name,
@@ -97,12 +98,21 @@ namespace MVC_Demo.Controllers
             }
             var departments = DbContext.Departments.ToList();
 
+            var Model = new TraineeFormViewModel()
+            {
+                Id = traineeDB.Id,
+                Name = traineeDB.Name,
+                Address = traineeDB.Address,
+                Grade = traineeDB.Grade,
+                DeptID = traineeDB.DeptID,
+                Departments = departments
+            };
 
-            return View(new TraineeAddModelView() { Trainee = traineeDB, Departments = departments });
+            return View(Model);
         }
 
         [HttpPost]
-        public IActionResult EditSave(int Id, TraineeAddModelView modelRequest)
+        public IActionResult EditSave(int Id, TraineeFormViewModel TraineeRequest)
         {
             var traineeDB = DbContext.Trainees.FirstOrDefault(tr => tr.Id == Id);
             if (traineeDB == null)
@@ -110,18 +120,20 @@ namespace MVC_Demo.Controllers
                 return NotFound();
             }
 
-            if (modelRequest.Trainee.Name != null)
+            if (ModelState.IsValid)
             {
-                traineeDB.Name = modelRequest.Trainee.Name;
-                traineeDB.Address = modelRequest.Trainee.Address;
-                traineeDB.DeptID = modelRequest.Trainee.DeptID;
-                traineeDB.Grade = modelRequest.Trainee.Grade;
+                traineeDB.Id = TraineeRequest.Id;
+                traineeDB.Name = TraineeRequest.Name;
+                traineeDB.Address = TraineeRequest.Address;
+                traineeDB.DeptID = TraineeRequest.DeptID;
+                traineeDB.Grade = TraineeRequest.Grade;
                 DbContext.SaveChanges();
 
                 return RedirectToAction("Details", new { Id });
             }
 
-            return View("Edit", modelRequest);
+            TraineeRequest.Departments = DbContext.Departments.ToList();
+            return View("Edit", TraineeRequest);
         }
 
         public IActionResult Delete(int Id)
@@ -138,6 +150,7 @@ namespace MVC_Demo.Controllers
 
                 // Remove Course it Self
                 DbContext.Trainees.Remove(trainee);
+                DbContext.SaveChanges(true);
 
                 return RedirectToAction("ShowAll");
             }

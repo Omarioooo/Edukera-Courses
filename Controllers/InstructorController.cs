@@ -3,7 +3,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MVC_Demo.Models;
-using MVC_Demo.ModelView;
+using MVC_Demo.Repository;
+using MVC_Demo.ViewModels;
 
 namespace MVC_Demo.Controllers
 {
@@ -15,9 +16,9 @@ namespace MVC_Demo.Controllers
         {
             var instructorsQuery = DbContext.Instructores
                 .Include(inst => inst.Department)
-                .Select(inst => new InstructorShowAllModelView
+                .Select(inst => new InstructorDetailsViewModel
                 {
-                    ID = inst.Id,
+                    Id = inst.Id,
                     Name = inst.Name,
                     ImageURL = inst.ImageURL,
                     DepartmentName = inst.Department.Name
@@ -39,28 +40,39 @@ namespace MVC_Demo.Controllers
 
         public IActionResult Add()
         {
-            var instructorModel = new InstructorAddModelView
+            var instructorModel = new InstructorFormViewModel
             {
-                instructor = new Instructore(),
-                departments = DbContext.Departments.ToList(),
-                courses = DbContext.Courses.ToList()
+                Departments = DbContext.Departments.ToList(),
+                Courses = DbContext.Courses.ToList()
             };
 
             return View(instructorModel);
         }
 
         [HttpPost]
-        public IActionResult AddSave(InstructorAddModelView instructoreRequest)
+        public IActionResult AddSave(InstructorFormViewModel instructorRequest)
         {
-            if (instructoreRequest.instructor.Name != null)
+            if (ModelState.IsValid)
             {
-                DbContext.Instructores.Add(instructoreRequest.instructor);
+                var instructor = new Instructore()
+                {
+                    Name = instructorRequest.Name,
+                    Salary = instructorRequest.Salary,
+                    Address = instructorRequest.Address,
+                    ImageURL = instructorRequest.ImageURL,
+                    CrsID = instructorRequest.CrsID,
+                    DeptID = instructorRequest.DeptID
+                };
+
+                DbContext.Instructores.Add(instructor);
                 DbContext.SaveChanges();
 
                 return RedirectToAction("ShowAll");
             }
 
-            return View("Add", instructoreRequest);
+            instructorRequest.Departments = DbContext.Departments.ToList();
+            instructorRequest.Courses = DbContext.Courses.ToList();
+            return View("Add", instructorRequest);
         }
 
         public IActionResult Details(int Id)
@@ -86,17 +98,24 @@ namespace MVC_Demo.Controllers
             var departments = DbContext.Departments.ToList();
             var courses = DbContext.Courses.ToList();
 
-            InstructorAddModelView instructorModel = new InstructorAddModelView()
+            var instructorModel = new InstructorFormViewModel()
             {
-                instructor = instructor,
-                departments = departments,
-                courses = courses
+                Id = instructor.Id,
+                Name = instructor.Name,
+                Salary = instructor.Salary,
+                Address = instructor.Address,
+                ImageURL = instructor.ImageURL,
+                CrsID = instructor.CrsID,
+                DeptID = instructor.DeptID,
+                Departments = departments,
+                Courses = courses
             };
+
             return View(instructorModel);
         }
 
         [HttpPost]
-        public IActionResult EditSave(int Id, InstructorAddModelView instructorRequest)
+        public IActionResult EditSave(int Id, InstructorFormViewModel instructorRequest)
         {
             var instructor = DbContext.Instructores
                 .FirstOrDefault(inst => inst.Id == Id);
@@ -106,20 +125,21 @@ namespace MVC_Demo.Controllers
                 return NotFound();
             }
 
-            if (instructorRequest.instructor.Name != null)
+            if (ModelState.IsValid)
             {
-                instructor.Name = instructorRequest.instructor.Name;
-                instructor.Address = instructorRequest.instructor.Address;
-                instructor.ImageURL = instructorRequest.instructor.ImageURL;
-                instructor.Salary = instructorRequest.instructor.Salary;
-                instructor.DeptID = instructorRequest.instructor.DeptID;
-                instructor.CrsID = instructorRequest.instructor.CrsID;
+                instructor.Name = instructorRequest.Name;
+                instructor.Address = instructorRequest.Address;
+                instructor.ImageURL = instructorRequest.ImageURL;
+                instructor.Salary = instructorRequest.Salary;
+                instructor.DeptID = instructorRequest.DeptID;
+                instructor.CrsID = instructorRequest.CrsID;
                 DbContext.SaveChanges();
 
                 return RedirectToAction("Details", new { Id });
             }
 
-            instructorRequest.instructor = instructor;
+            instructorRequest.Departments = DbContext.Departments.ToList();
+            instructorRequest.Courses = DbContext.Courses.ToList();
             return View("Edit", instructorRequest);
         }
 

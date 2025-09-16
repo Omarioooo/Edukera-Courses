@@ -1,4 +1,4 @@
-﻿@model InstructorAddModelView
+﻿@model InstructorFormViewModel
 @{
     ViewData["Title"] = "Add Instructor";
 }
@@ -12,38 +12,34 @@
                 <form asp-controller="Instructor" asp-action="AddSave" method="post">
 
                     <div class="mb-3">
-                        <label for="Name" class="form-label">Name</label>
-                        <input type="text" name="Instructor.Name" id="Name"
-                               value="@Model?.instructor?.Name"
-                               class="form-control" placeholder="Enter instructor name" />
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" placeholder="Enter instructor name" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
                     </div>
 
                     <div class="mb-3">
-                        <label for="Salary" class="form-label">Salary</label>
-                        <input type="number" name="Instructor.Salary" id="Salary"
-                               value="@Model?.instructor?.Salary"
-                               class="form-control" placeholder="Enter salary" />
+                        <label asp-for="Salary" class="form-label"></label>
+                        <input asp-for="Salary" class="form-control" placeholder="Enter salary" />
+                        <span asp-validation-for="Salary" class="text-danger small"></span>
                     </div>
 
                     <div class="mb-3">
-                        <label for="ImageURL" class="form-label">Image URL</label>
-                        <input type="text" name="Instructor.ImageURL" id="ImageURL"
-                               value="@Model?.instructor?.ImageURL"
-                               class="form-control" placeholder="Enter image path or URL" />
+                        <label asp-for="ImageURL" class="form-label"></label>
+                        <input asp-for="ImageURL" class="form-control" placeholder="Enter image path or URL" />
+                        <span asp-validation-for="ImageURL" class="text-danger small"></span>
                     </div>
 
                     <div class="mb-3">
-                        <label for="Address" class="form-label">Address</label>
-                        <input type="text" name="Instructor.Address" id="Address"
-                               value="@Model?.instructor?.Address"
-                               class="form-control" placeholder="Enter address" />
+                        <label asp-for="Address" class="form-label"></label>
+                        <input asp-for="Address" class="form-control" placeholder="Enter address"/>
+                        <span asp-validation-for="Address" class="text-danger small"></span>
                     </div>
 
                     <div class="mb-3">
-                        <label for="DeptID" class="form-label">Department</label>
-                        <select name="Instructor.DeptID" id="DeptID" class="form-select">
+                        <label asp-for="DeptID" class="form-label"></label>
+                        <select asp-for="DeptID" class="form-select">
                             <option value="">-- Select Department --</option>
-                            @foreach (var dep in Model?.departments)
+                            @foreach (var dep in Model?.Departments)
                             {
                                 <option value="@dep.Id">@dep.Name</option>
                             }
@@ -51,10 +47,10 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="CrsID" class="form-label">Course</label>
-                        <select name="Instructor.CrsID" id="CrsID" class="form-select">
+                        <label asp-for="CrsID" class="form-label"></label>
+                        <select asp-for="CrsID" class="form-select">
                             <option value="">-- Select Course --</option>
-                            @foreach (var crs in Model?.courses)
+                            @foreach (var crs in Model?.Courses)
                             {
                                 <option value="@crs.Id">@crs.Name</option>
                             }
@@ -64,10 +60,10 @@
                     <div class="d-flex justify-content-between mt-4">
                         <a asp-controller="Instructor" asp-action="ShowAll"
                            class="btn btn-secondary">
-                            ⬅ Back To List
+                             Back To List
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            💾 Save
+                             Save
                         </button>
                     </div>
 

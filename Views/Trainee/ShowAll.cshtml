@@ -1,4 +1,4 @@
-﻿@model List<TraineeShowAllModelView>
+﻿@model List<TraineeDetailsViewModel>
 @{
     ViewData["Title"] = "Show All Trainees";
 }
@@ -24,6 +24,7 @@
                         <th>Id</th>
                         <th>Name</th>
                         <th>Address</th>
+                        <th>Grade</th>
                         <th>Department</th>
                         <th>Profile Photo</th>
                         <th>Trainee Profile</th>
@@ -36,6 +37,7 @@
                             <td>@item.Id</td>
                             <td>@item.Name</td>
                             <td>@item.Address</td>
+                            <td>@item.Grade</td>
                             <td>@item.DepartmentName</td>
                             <td>
                                 <img src="/images/@item.ImageURL"
@@ -44,12 +46,12 @@
                                      style="width:100px; height:100px; object-fit:cover;" />
                             </td>
                             <td>
-                                <a asp-action="Details"
-                                   asp-controller="Trainee"
-                                   asp-route-id="@item.Id"
-                                   class="btn btn-outline-primary btn-sm">
-                                    Show Details
-                                </a>
+                            <a class="btn btn-sm btn-primary text-uppercase"
+                               asp-controller="Trainee"
+                               asp-action="Details"
+                               asp-route-id="@item.Id">
+                                Show Details
+                            </a>
                             </td>
                         </tr>
                     }

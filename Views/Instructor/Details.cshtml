@@ -40,7 +40,9 @@
                 Back to List
             </a>
 
-            <button type="button" class="btn btn-danger btn-lg text-uppercase shadow" onclick="confirmDelete(@Model.Id, @ViewData["ControllerName"])">
+            <button type="button"
+                    class="btn btn-danger btn-lg text-uppercase shadow"
+                    onclick="confirmDelete(@Model.Id, '@ViewData["ControllerName"]')">
                 Delete
             </button>
 

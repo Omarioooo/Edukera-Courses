@@ -11,6 +11,7 @@
     <div class="card shadow-sm p-4 mx-auto" style="max-width: 600px;">
         <form asp-action="EditSave" asp-controller="Department" method="post">
             <input type="hidden" asp-for="Id" />
+
             <div class="mb-3">
                 <label asp-for="Name" class="form-label"></label>
                 <input asp-for="Name" class="form-control" placeholder="Enter department name" value="@Model?.Name" />
@@ -28,7 +29,8 @@
                    class="btn btn-secondary">
                     Back To List
                 </a>
-                <button type="submit" class="btn btn-primary" onclick="confirmUpdate()">
+                <!-- onclick="confirmUpdate()" -->
+                <button type="submit" class="btn btn-primary">
                     Save Changes
                 </button>
             </div>

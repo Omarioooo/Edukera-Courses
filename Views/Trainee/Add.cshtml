@@ -1,9 +1,9 @@
-﻿@model TraineeAddModelView
+﻿@model TraineeFormViewModel
 @{
     ViewData["Title"] = "Add Trainee";
-    SelectList grades = new SelectList(
+    var grades = new SelectList(
         new List<string> { "Excellent", "VeryGood", "Good", "Acceptable", "None" },
-        Model?.Trainee?.Grade
+        Model?.Grade
     );
 }
 
@@ -15,56 +15,58 @@
         <div class="card shadow-lg mx-auto" style="max-width: 700px;">
             <div class="card-body">
                 <form asp-controller="Trainee" asp-action="AddSave" method="post">
-                    <input asp-for="@Model.Trainee.Id" hidden />
                     <div class="mb-3">
-                        <label asp-for="@Model.Trainee.Name" class="form-label"></label>
-                        <input asp-for="@Model.Trainee.Name" class="form-control" placeholder="Enter trainee name" />
-                        <span asp-validation-for="@Model.Trainee.Name" class="text-danger small"></span>
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" placeholder="Enter trainee name" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
                     </div>
 
 
                     <div class="mb-3">
-                        <label asp-for="@Model.Trainee.Grade" class="form-label"></label>
-                        <select asp-for="@Model.Trainee.Grade"
-                                asp-items="grades"
-                                class="form-select">
+                        <label asp-for="Grade" class="form-label"></label>
+                        <select asp-for="Grade" asp-items="grades" class="form-select">
                             <option value="">-- Select Grade --</option>
                         </select>
-                        <span asp-validation-for="@Model.Trainee.Grade" class="text-danger small"></span>
+                        <span asp-validation-for="Grade" class="text-danger small"></span>
                     </div>
 
 
                     <div class="mb-3">
-                        <label asp-for="@Model.Trainee.Address" class="form-label"></label>
-                        <input asp-for="@Model.Trainee.Address" class="form-control" placeholder="Enter address" />
+                        <label asp-for="Address" class="form-label"></label>
+                        <input asp-for="Address" class="form-control" placeholder="Enter address" />
+                        <span asp-validation-for="Address" class="text-danger small"></span>
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="@Model.Trainee.DeptID" class="form-label"></label>
-                        <select asp-for="@Model.Trainee.DeptID" class="form-select">
+                        <label asp-for="DeptID" class="form-label"></label>
+                        <select asp-for="DeptID" class="form-select">
                             <option value="">-- Select Department --</option>
-                            @foreach (var dep in Model?.Departments)
+                            @foreach (var dep in ViewBag.Departments)
                             {
                                 <option value="@dep.Id">@dep.Name</option>
                             }
                         </select>
+                        <span asp-validation-for="DeptID" class="text-danger small"></span>
                     </div>
 
                     <div class="mb-3">
                         <!-- Label bound to the imageFile property -->
-                        <label asp-for="Trainee.imageFile" class="form-label">Upload Image</label>
+                        <label asp-for="imageFile" class="form-label">Upload Image</label>
 
                         <!-- Drag & Drop area -->
                         <div id="drop-area" class="border border-2 p-3 text-center rounded">
                             <p>Drag & Drop an image here or click to select</p>
 
                             <!-- Hidden file input bound to imageFile -->
-                            <input asp-for="Trainee.imageFile" type="file" id="fileElem" accept="image/*" style="display:none" />
+                            <input asp-for="imageFile" type="file" id="fileElem" accept="image/*" style="display:none" />
 
                             <!-- Button to open file dialog -->
                             <button type="button" class="btn btn-secondary" onclick="document.getElementById('fileElem').click();">
                                 Choose File
                             </button>
+
+                            <!-- Error Validation -->
+                            <span asp-validation-for="imageFile" class="text-danger small"></span>
                         </div>
 
                         <!-- Image preview after file selection -->
@@ -75,10 +77,10 @@
                     <div class="d-flex justify-content-between mt-4">
                         <a asp-controller="Trainee" asp-action="ShowAll"
                            class="btn btn-secondary">
-                            ⬅ Back To List
+                            Back To List
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            💾 Save
+                            Save
                         </button>
                     </div>
 
@@ -87,52 +89,3 @@
         </div>
     </div>
 </section>
-
-<script>
-    // Get references to DOM elements
-    const dropArea = document.getElementById("drop-area");
-    const fileInput = document.getElementById("fileElem");
-    const preview = document.getElementById("preview");
-
-    // Prevent default behavior when dragging a file over the area
-    dropArea.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        dropArea.classList.add("bg-light"); // highlight drop area
-    });
-
-    // Remove highlight when drag leaves the area
-    dropArea.addEventListener("dragleave", () => {
-        dropArea.classList.remove("bg-light");
-    });
-
-    // Handle file drop
-    dropArea.addEventListener("drop", (e) => {
-        e.preventDefault();
-        dropArea.classList.remove("bg-light");
-
-        // Attach dropped file(s) to the hidden file input
-        fileInput.files = e.dataTransfer.files;
-
-        // Show preview of the first image file
-        if (fileInput.files.length > 0) {
-            showPreview(fileInput.files[0]);
-        }
-    });
-
-    // Handle file selection from dialog
-    fileInput.addEventListener("change", () => {
-        if (fileInput.files.length > 0) {
-            showPreview(fileInput.files[0]);
-        }
-    });
-
-    // Function to show image preview
-    function showPreview(file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            preview.src = e.target.result;
-            preview.style.display = "block";
-        };
-        reader.readAsDataURL(file); // Convert file to base64 for preview
-    }
-</script>
