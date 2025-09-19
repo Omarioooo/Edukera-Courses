@@ -1,48 +1,50 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using MVC_Demo.Models;
-using MVC_Demo.Repository;
-using MVC_Demo.ViewModels;
-
-namespace MVC_Demo.Controllers
+﻿namespace MVC_Demo.Controllers
 {
     public class CourseController : Controller
     {
 
-        Context DbContext = new Context();
+        private readonly ICourseRepository _courseRepo;
+        private readonly IDepartmentRepository _deptRepo;
+        private readonly IInstructorRepository _instRepo;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public CourseController(ICourseRepository courseRepo, IDepartmentRepository deptRepo,
+                         IInstructorRepository instRepo, IUnitOfWork unitOfWork)
+        {
+            _courseRepo = courseRepo;
+            _deptRepo = deptRepo;
+            _instRepo = instRepo;
+            _unitOfWork = unitOfWork;
+        }
 
         public IActionResult ShowAll(string? search)
         {
-            var coursesQuery = DbContext.Courses
-                .Include(crs => crs.Department)
-                .Select(crs => new CourseDetailsViewModel
+            List<Course> courses;
+
+            if (string.IsNullOrEmpty(search))
+                courses = _courseRepo.GetAllWithDepartment();
+            else
+                courses = _courseRepo.SearchByName(search);
+
+            var model = courses.Select(crs =>
+                new CourseDetailsViewModel()
                 {
                     Id = crs.Id,
                     Name = crs.Name,
                     Degree = crs.Degree,
                     MinDegree = crs.MinDegree,
-                    DepartmentName = crs.Department.Name
-                });
+                    DepartmentName = crs.Department?.Name
+                })
+                .ToList();
 
-            if (!search.IsNullOrEmpty())
-            {
-                var coursesList = coursesQuery
-                     .Where(crs => crs.Name.StartsWith(search))
-                     .ToList();
-
-                return View(coursesList);
-            }
-
-            var courses = coursesQuery.ToList();
-            return View(courses);
+            return View(model);
         }
 
         public IActionResult Add()
         {
             var model = new CourseFormViewModel
             {
-                Departments = DbContext.Departments.ToList()
+                Departments = _deptRepo.GetAll()
             };
 
             return View(model);
@@ -61,42 +63,39 @@ namespace MVC_Demo.Controllers
                     MinDegree = courseRequest.MinDegree,
                     DeptID = courseRequest.DeptID,
                 };
-                DbContext.Courses.Add(course);
+                _courseRepo.Add(course);
 
-                DbContext.SaveChanges();
+                _unitOfWork.Save();
 
                 return RedirectToAction("ShowAll");
             }
 
-            courseRequest.Departments = DbContext.Departments.ToList();
+            courseRequest.Departments = _deptRepo.GetAll();
             return View("Add", courseRequest);
         }
 
-        public IActionResult Details(int id)
+        public IActionResult Details(int Id)
         {
-            var model = DbContext.Courses
-                .Include(crs => crs.Instructores)
-                .Select(crs => new CourseDetailsViewModel()
-                {
-                    Id = crs.Id,
-                    Name = crs.Name,
-                    Degree = crs.Degree,
-                    MinDegree = crs.MinDegree,
-                    NumOfInstructors = crs.Instructores.Count(),
-                    DepartmentName = crs.Department.Name
-                })
-                .FirstOrDefault(crs => crs.Id == id);
+            var course = _courseRepo.GetByIdWithDepartment(Id);
+
+            var model = new CourseDetailsViewModel
+            {
+                Id = course.Id,
+                Name = course.Name,
+                Degree = course.Degree,
+                MinDegree = course.MinDegree,
+                DepartmentName = course.Department.Name,
+                NumOfInstructors = _instRepo.NumOfInstructorsByCourse(Id)
+            };
 
             return View(model);
         }
 
         public IActionResult Edit(int Id)
         {
-            var course = DbContext.Courses.FirstOrDefault(crs => crs.Id == Id);
+            var course = _courseRepo.GetById(Id);
             if (course == null)
-            {
                 return NotFound();
-            }
 
             var model = new CourseFormViewModel
             {
@@ -105,7 +104,7 @@ namespace MVC_Demo.Controllers
                 Degree = course.Degree,
                 MinDegree = course.MinDegree,
                 DeptID = course.DeptID,
-                Departments = DbContext.Departments.ToList()
+                Departments = _deptRepo.GetAll()
             };
 
             return View(model);
@@ -114,7 +113,7 @@ namespace MVC_Demo.Controllers
         [HttpPost]
         public IActionResult EditSave(int Id, CourseFormViewModel courseRequest)
         {
-            var courseDB = DbContext.Courses.FirstOrDefault(crs => crs.Id == Id);
+            var courseDB = _courseRepo.GetById(Id);
             if (courseDB == null)
             {
                 return NotFound();
@@ -126,43 +125,29 @@ namespace MVC_Demo.Controllers
                 courseDB.Degree = courseRequest.Degree;
                 courseDB.MinDegree = courseRequest.MinDegree;
                 courseDB.DeptID = courseRequest.DeptID;
-                DbContext.SaveChanges();
+
+                _unitOfWork.Save();
 
                 return RedirectToAction("Details", new { Id });
             }
 
-            courseRequest.Departments = DbContext.Departments.ToList();
+            courseRequest.Departments = _deptRepo.GetAll();
             return View("Edit", courseRequest);
         }
 
         public IActionResult Delete(int Id)
         {
-            var course = DbContext.Courses
-                .FirstOrDefault(c => c.Id == Id);
+            // Delete the course itself
+            _courseRepo.Delete(Id);
 
-            if (course != null)
-            {
-                // Delete related instructors
-                var instructors = DbContext.Instructores
-                    .Where(inst => inst.Course.Id == Id)
-                    .ToList();
-                DbContext.Instructores.RemoveRange(instructors);
+            // Delete related instructors
+            var instructors = _instRepo.SearchByCourseID(Id);
+            _instRepo.DeleteGroup(instructors);
 
-                // Delete related results
-                var results = DbContext.Results
-                    .Where(rs => rs.Course.Id == Id)
-                    .ToList();
-                DbContext.Results.RemoveRange(results);
+            // Save updates
+            _unitOfWork.Save();
 
-                // Delete the course itself
-                DbContext.Courses.Remove(course);
-
-                // Save all changes
-                DbContext.SaveChanges();
-
-                return RedirectToAction("ShowAll");
-            }
-            return RedirectToAction("Details", new { Id });
+            return RedirectToAction("ShowAll");
         }
     }
 }

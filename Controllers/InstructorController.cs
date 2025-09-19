@@ -1,49 +1,52 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.IdentityModel.Tokens;
-using MVC_Demo.Models;
-using MVC_Demo.Repository;
-using MVC_Demo.ViewModels;
 
 namespace MVC_Demo.Controllers
 {
     public class InstructorController : Controller
     {
-        Context DbContext = new Context();
+        private readonly IInstructorRepository _instRepo;
+        private readonly ICourseRepository _courseRepo;
+        private readonly IDepartmentRepository _deptRepo;
+        private readonly IUnitOfWork _unitOfWork;
 
+        public InstructorController(IInstructorRepository instructorRepository, ICourseRepository courseRepository,
+                           IDepartmentRepository departmentRepository, IUnitOfWork unitOfWork)
+        {
+            _instRepo = instructorRepository;
+            _courseRepo = courseRepository;
+            _deptRepo = departmentRepository;
+            _unitOfWork = unitOfWork;
+        }
         public IActionResult ShowAll(string? search)
         {
-            var instructorsQuery = DbContext.Instructores
-                .Include(inst => inst.Department)
-                .Select(inst => new InstructorDetailsViewModel
-                {
-                    Id = inst.Id,
-                    Name = inst.Name,
-                    ImageURL = inst.ImageURL,
-                    DepartmentName = inst.Department.Name
-                })
-                .AsQueryable();
+            List<Instructor> instructors;
 
-            if (!search.IsNullOrEmpty())
+            if (search == null)
+                instructors = _instRepo.GetAllWithDepartment();
+            else
+                instructors = _instRepo.SearchByName(search);
+
+            var model = instructors.Select(inst =>
+            new InstructorDetailsViewModel
             {
-                var instructorsList = instructorsQuery
-                    .Where(inst => inst.Name.StartsWith(search))
-                    .ToList();
+                Id = inst.Id,
+                Name = inst.Name,
+                ImageURL = inst.ImageURL,
+                DepartmentName = inst.Department.Name
 
-                return View(instructorsList);
-            }
+            })
+            .ToList();
 
-            var instructors = instructorsQuery.ToList();
-            return View(instructors);
+            return View(model);
         }
 
         public IActionResult Add()
         {
             var instructorModel = new InstructorFormViewModel
             {
-                Departments = DbContext.Departments.ToList(),
-                Courses = DbContext.Courses.ToList()
+                Departments = _deptRepo.GetAll(),
+                Courses = _courseRepo.GetAll()
             };
 
             return View(instructorModel);
@@ -54,7 +57,7 @@ namespace MVC_Demo.Controllers
         {
             if (ModelState.IsValid)
             {
-                var instructor = new Instructore()
+                var instructor = new Instructor()
                 {
                     Name = instructorRequest.Name,
                     Salary = instructorRequest.Salary,
@@ -64,39 +67,33 @@ namespace MVC_Demo.Controllers
                     DeptID = instructorRequest.DeptID
                 };
 
-                DbContext.Instructores.Add(instructor);
-                DbContext.SaveChanges();
+                _instRepo.Add(instructor);
+
+                _unitOfWork.Save();
 
                 return RedirectToAction("ShowAll");
             }
 
-            instructorRequest.Departments = DbContext.Departments.ToList();
-            instructorRequest.Courses = DbContext.Courses.ToList();
+            instructorRequest.Departments = _deptRepo.GetAll();
+            instructorRequest.Courses = _courseRepo.GetAll();
             return View("Add", instructorRequest);
         }
 
         public IActionResult Details(int Id)
         {
-            var instructore = DbContext.Instructores
-                .Include(inst => inst.Department)
-                .Include(inst => inst.Course)
-                .FirstOrDefault(inst => inst.Id == Id);
+            var instructor = _instRepo.GetByIDWithDepartment(Id);
 
-            if (instructore == null)
-            {
+            if (instructor == null)
                 return NotFound();
-            }
-
-            return View(instructore);
+            return View(instructor);
         }
 
         public IActionResult Edit(int Id)
         {
-            var instructor = DbContext.Instructores
-                .FirstOrDefault(inst => inst.Id == Id);
+            var instructor = _instRepo.GetById(Id);
 
-            var departments = DbContext.Departments.ToList();
-            var courses = DbContext.Courses.ToList();
+            var departments = _deptRepo.GetAll();
+            var courses = _courseRepo.GetAll();
 
             var instructorModel = new InstructorFormViewModel()
             {
@@ -117,8 +114,7 @@ namespace MVC_Demo.Controllers
         [HttpPost]
         public IActionResult EditSave(int Id, InstructorFormViewModel instructorRequest)
         {
-            var instructor = DbContext.Instructores
-                .FirstOrDefault(inst => inst.Id == Id);
+            var instructor = _instRepo.GetById(Id);
 
             if (instructor == null)
             {
@@ -133,30 +129,25 @@ namespace MVC_Demo.Controllers
                 instructor.Salary = instructorRequest.Salary;
                 instructor.DeptID = instructorRequest.DeptID;
                 instructor.CrsID = instructorRequest.CrsID;
-                DbContext.SaveChanges();
+
+                _unitOfWork.Save();
 
                 return RedirectToAction("Details", new { Id });
             }
 
-            instructorRequest.Departments = DbContext.Departments.ToList();
-            instructorRequest.Courses = DbContext.Courses.ToList();
+            instructorRequest.Departments = _deptRepo.GetAll();
+            instructorRequest.Courses = _courseRepo.GetAll();
             return View("Edit", instructorRequest);
         }
 
         public IActionResult Delete(int Id)
         {
-            var instructor = DbContext.Instructores.FirstOrDefault(inst => inst.Id == Id);
+            _instRepo.Delete(Id);
 
-            if (instructor != null)
-            {
-                DbContext.Instructores.Remove(instructor);
+            // Save all changes
+            _unitOfWork.Save();
 
-                // Save all changes
-                DbContext.SaveChanges();
-
-                return RedirectToAction("ShowAll");
-            }
-            return RedirectToAction("Details", new { Id });
+            return RedirectToAction("ShowAll");
         }
     }
 }

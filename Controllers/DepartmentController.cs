@@ -1,25 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MVC_Demo.Models;
-using MVC_Demo.Repository;
-using MVC_Demo.ViewModels;
-
+﻿using Microsoft.IdentityModel.Tokens;
 namespace MVC_Demo.Controllers
 {
     public class DepartmentController : Controller
     {
-        Context DbContext = new Context();
+        private readonly IDepartmentRepository _deptRepo;
+        private readonly IInstructorRepository _instructorRepo;
+        private readonly ITraineeRepository _traineeRepo;
+        private readonly ICourseRepository _courseRepo;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public DepartmentController(IDepartmentRepository deptRepo, IUnitOfWork unitOfWork)
+        {
+            _deptRepo = deptRepo;
+            _unitOfWork = unitOfWork;
+        }
 
         public IActionResult ShowAll(string? search)
         {
-            var query = DbContext.Departments.AsQueryable();
+            List<Department> departments;
 
-            if (!string.IsNullOrEmpty(search))
-            {
-                query = query.Where(dept => dept.Name.StartsWith(search));
-            }
+            if (search.IsNullOrEmpty())
+                departments = _deptRepo.GetAll();
+            else
+                departments = _deptRepo.SearchByName(search);
 
-            var departments = query.ToList();
             return View(departments);
         }
 
@@ -33,10 +37,11 @@ namespace MVC_Demo.Controllers
         {
             if (ModelState.IsValid)
             {
-                DbContext.Departments.Add(departmentRequest);
-                DbContext.SaveChanges();
+                _deptRepo.Add(departmentRequest);
 
-                return RedirectToAction("ShowAll", DbContext.Departments.ToList());
+                _unitOfWork.Save();
+
+                return RedirectToAction("ShowAll", _deptRepo.GetAll());
             }
 
             return View("Add", departmentRequest);
@@ -44,29 +49,25 @@ namespace MVC_Demo.Controllers
 
         public IActionResult Details(int Id)
         {
-            var department = DbContext.Departments
-              .Include(dept => dept.Courses)
-              .Include(dept => dept.Trainees)
-              .Include(dept => dept.Instructores)
-              .FirstOrDefault(dept => dept.Id == Id);
+            var department = _deptRepo.GetByIdWithRelations(Id);
 
 
-            var departmentModel = new DepartmentDetailsViewModel()
+            var model = new DepartmentDetailsViewModel()
             {
                 Id = department.Id,
                 Name = department.Name,
                 ManagerName = department.ManagerName,
-                NumberOfInstructors = department.Instructores.Count(),
-                NumberOfCourses = department.Courses.Count(),
-                NumberOfTrainees = department.Trainees.Count(),
+                NumberOfInstructors = _deptRepo.GetNumberOfInstructors(Id),
+                NumberOfCourses = _deptRepo.GetNumberOfCourses(Id),
+                NumberOfTrainees = _deptRepo.GetNumberOfTrainees(Id),
             };
 
-            return View(departmentModel);
+            return View(model);
         }
 
-        public IActionResult Edit(int id)
+        public IActionResult Edit(int Id)
         {
-            var department = DbContext.Departments.FirstOrDefault(dept => dept.Id == id);
+            var department = _deptRepo.GetById(Id);
 
             if (department == null)
             {
@@ -81,11 +82,12 @@ namespace MVC_Demo.Controllers
         {
             if (ModelState.IsValid)
             {
-                var departmentDB = DbContext.Departments.FirstOrDefault(dept => dept.Id == Id);
+                var departmentDB = _deptRepo.GetById(Id);
                 departmentDB.Name = departmentRequest.Name;
                 departmentDB.ManagerName = departmentRequest.ManagerName;
 
-                DbContext.SaveChanges();
+                // Save Changes
+                _unitOfWork.Save();
 
                 return RedirectToAction("Details", new { Id });
             }
@@ -94,38 +96,25 @@ namespace MVC_Demo.Controllers
 
         public IActionResult Delete(int Id)
         {
-            var department = DbContext.Departments.FirstOrDefault(dept => dept.Id == Id);
+            // Remove Related Instructor
+            var instructors = _instructorRepo.GetByDepartment(Id);
+            _instructorRepo.DeleteGroup(instructors);
 
-            if (department != null)
-            {
-                // Remove Related Instructor
-                var instructors = DbContext.Instructores
-                    .Where(inst => inst.DeptID == Id)
-                    .ToList();
-                DbContext.RemoveRange(instructors);
+            // Remove Related Trainees
+            var trainees = _traineeRepo.GetByDepartment(Id);
+            _traineeRepo.DeleteGroup(trainees);
 
-                // Remove Related Trainees
-                var trainees = DbContext.Trainees
-                    .Where(tr => tr.DeptID == Id)
-                    .ToList();
-                DbContext.RemoveRange(trainees);
+            // Remove Realated Coureses
+            var courses = _courseRepo.GetByDepartment(Id);
+            _courseRepo.DeleteGroup(courses);
 
-                // Remove Realated Coureses
-                var courses = DbContext.Courses
-                    .Where(crs => crs.DeptID == Id)
-                    .ToList();
-                DbContext.RemoveRange(courses);
+            // Remove Course itself
+            _deptRepo.Delete(Id);
 
-                // Remove Course itself
-                DbContext.Remove(department);
+            // Save all changes
+            _unitOfWork.Save();
 
-                // Save all changes
-                DbContext.SaveChanges();
-
-                return RedirectToAction("ShowAll");
-            }
-
-            return RedirectToAction("Details", new { Id });
+            return RedirectToAction("ShowAll");
         }
     }
 }

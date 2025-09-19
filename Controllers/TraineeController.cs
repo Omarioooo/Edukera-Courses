@@ -1,50 +1,52 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using MVC_Demo.Models;
-using MVC_Demo.Repository;
-using MVC_Demo.ViewModels;
-
-namespace MVC_Demo.Controllers
+﻿namespace MVC_Demo.Controllers
 {
     public class TraineeController : Controller
     {
-        Context DbContext = new Context();
+        private readonly IInstructorRepository _instRepo;
+        private readonly ICourseRepository _courseRepo;
+        private readonly IDepartmentRepository _deptRepo;
+        private readonly ITraineeRepository _traineeRepo;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public TraineeController(IInstructorRepository instRepo, ICourseRepository courseRepo,
+            IDepartmentRepository deptRepo, ITraineeRepository traineeRepo, IUnitOfWork unitOfWork)
+        {
+            _instRepo = instRepo;
+            _courseRepo = courseRepo;
+            _deptRepo = deptRepo;
+            _traineeRepo = traineeRepo;
+            _unitOfWork = unitOfWork;
+        }
 
         public IActionResult ShowAll(string? search)
         {
+            List<Trainee> trainees;
 
-            var traineesQuery = DbContext.Trainees
-                .Include(tr => tr.Department)
-                .Select(tr => new TraineeDetailsViewModel
-                {
-                    Id = tr.Id,
-                    Name = tr.Name,
-                    Address = tr.Address,
-                    ImageURL = tr.ImageURL,
-                    Grade = tr.Grade,
-                    DepartmentName = tr.Department.Name
-                })
-                .AsQueryable();
+            if (string.IsNullOrEmpty(search))
+                trainees = _traineeRepo.GetAllWithDepartment();
+            else
+                trainees = _traineeRepo.SearchByName(search);
 
-            if (!search.IsNullOrEmpty())
+            var model = trainees
+            .Select(tr => new TraineeDetailsViewModel
             {
-                var traineesList = traineesQuery
-                    .Where(tr => tr.Name.StartsWith(search))
-                    .ToList();
+                Id = tr.Id,
+                Name = tr.Name,
+                Address = tr.Address,
+                Grade = tr.Grade,
+                ImageURL = tr.ImageURL,
+                DepartmentName = tr.Department.Name
+            })
+            .ToList();
 
-                return View(traineesList);
-            }
-
-            var trainees = traineesQuery.ToList();
-            return View(trainees);
+            return View(model);
         }
 
         public IActionResult Add()
         {
-            var departments = DbContext.Departments.ToList();
-            ViewBag.Departments = departments;
-            return View();
+            var model = new TraineeFormViewModel();
+            model.Departments = _deptRepo.GetAll();
+            return View(model);
         }
 
 
@@ -63,62 +65,60 @@ namespace MVC_Demo.Controllers
                     ImageURL = traineeRequest.ImageURL
                 };
 
-                DbContext.Trainees.Add(newTrainee);
-                DbContext.SaveChanges();
+                _traineeRepo.Add(newTrainee);
+                _unitOfWork.Save();
 
                 return RedirectToAction("ShowAll");
             }
 
-            traineeRequest.Departments = DbContext.Departments.ToList();
+            traineeRequest.Departments = _deptRepo.GetAll();
             return View("Add", traineeRequest);
         }
 
-        public IActionResult Details(int id)
+        public IActionResult Details(int Id)
         {
-            var traineeModel = DbContext.Trainees
-                .Include(tr => tr.Department)
-                .Select(tr => new TraineeDetailsViewModel
-                {
-                    Id = tr.Id,
-                    Name = tr.Name,
-                    Address = tr.Address,
-                    Grade = tr.Grade,
-                    DepartmentName = tr.Department.Name
-                })
-                .FirstOrDefault(tr => tr.Id == id);
-            return View(traineeModel);
+            var trainee = _traineeRepo.GetByIdWithDepartment(Id);
+
+            var model = new TraineeDetailsViewModel
+            {
+                Id = trainee.Id,
+                Name = trainee.Name,
+                Address = trainee.Address,
+                Grade = trainee.Grade,
+                DepartmentName = trainee.Department.Name
+            };
+
+            return View(model);
         }
 
-        public IActionResult Edit(int id)
+        public IActionResult Edit(int Id)
         {
-            var traineeDB = DbContext.Trainees.FirstOrDefault(tr => tr.Id == id);
-            if (traineeDB == null)
-            {
-                return NotFound();
-            }
-            var departments = DbContext.Departments.ToList();
+            var traineeDB = _traineeRepo.GetById(Id);
 
-            var Model = new TraineeFormViewModel()
+            if (traineeDB == null)
+                return NotFound();
+
+            var model = new TraineeFormViewModel()
             {
                 Id = traineeDB.Id,
                 Name = traineeDB.Name,
                 Address = traineeDB.Address,
                 Grade = traineeDB.Grade,
                 DeptID = traineeDB.DeptID,
-                Departments = departments
+                Departments = _deptRepo.GetAll()
             };
 
-            return View(Model);
+            return View(model);
         }
 
         [HttpPost]
         public IActionResult EditSave(int Id, TraineeFormViewModel TraineeRequest)
         {
-            var traineeDB = DbContext.Trainees.FirstOrDefault(tr => tr.Id == Id);
+            var traineeDB = _traineeRepo.GetById(Id);
+
             if (traineeDB == null)
-            {
                 return NotFound();
-            }
+
 
             if (ModelState.IsValid)
             {
@@ -127,35 +127,22 @@ namespace MVC_Demo.Controllers
                 traineeDB.Address = TraineeRequest.Address;
                 traineeDB.DeptID = TraineeRequest.DeptID;
                 traineeDB.Grade = TraineeRequest.Grade;
-                DbContext.SaveChanges();
+
+                _unitOfWork.Save();
 
                 return RedirectToAction("Details", new { Id });
             }
 
-            TraineeRequest.Departments = DbContext.Departments.ToList();
+            TraineeRequest.Departments = _deptRepo.GetAll();
             return View("Edit", TraineeRequest);
         }
 
         public IActionResult Delete(int Id)
         {
-            var trainee = DbContext.Trainees.FirstOrDefault(tr => tr.Id == Id);
+            _traineeRepo.Delete(Id);
+            _unitOfWork.Save();
 
-            if (trainee != null)
-            {
-                // Remoce Related Results
-                var results = DbContext.Results
-                    .Where(rs => rs.TraineeID == Id)
-                    .ToList();
-                DbContext.RemoveRange(results);
-
-                // Remove Course it Self
-                DbContext.Trainees.Remove(trainee);
-                DbContext.SaveChanges(true);
-
-                return RedirectToAction("ShowAll");
-            }
-
-            return RedirectToAction("Details", new { Id });
+            return RedirectToAction("ShowAll");
         }
     }
 }

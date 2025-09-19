@@ -19,6 +19,6 @@ namespace MVC_Demo.Models
 
         public List<Course>? Courses { get; set; }
 
-        public List<Instructore>? Instructores { get; set; }
+        public List<Instructor>? Instructors { get; set; }
     }
 }

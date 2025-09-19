@@ -20,7 +20,7 @@ namespace MVC_Demo.Models
 
         public Department? Department { get; set; }
 
-        public List<Instructore>? Instructores { get; set; }
+        public List<Instructor>? Instructors { get; set; }
         public List<CourseResult>? Results { get; set; }
     }
 }
