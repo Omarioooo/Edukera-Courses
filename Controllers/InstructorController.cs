@@ -1,8 +1,10 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.CodeAnalysis;
 using Microsoft.IdentityModel.Tokens;
 
 namespace MVC_Demo.Controllers
 {
+    [Authorize]
     public class InstructorController : Controller
     {
         private readonly IInstructorRepository _instRepo;

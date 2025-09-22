@@ -1,18 +1,17 @@
-﻿namespace MVC_Demo.Controllers
+﻿using Microsoft.AspNetCore.Authorization;
+using ViewModels;
+
+namespace MVC_Demo.Controllers
 {
+    [Authorize]
     public class TraineeController : Controller
     {
-        private readonly IInstructorRepository _instRepo;
-        private readonly ICourseRepository _courseRepo;
         private readonly IDepartmentRepository _deptRepo;
         private readonly ITraineeRepository _traineeRepo;
         private readonly IUnitOfWork _unitOfWork;
 
-        public TraineeController(IInstructorRepository instRepo, ICourseRepository courseRepo,
-            IDepartmentRepository deptRepo, ITraineeRepository traineeRepo, IUnitOfWork unitOfWork)
+        public TraineeController(IDepartmentRepository deptRepo, ITraineeRepository traineeRepo, IUnitOfWork unitOfWork)
         {
-            _instRepo = instRepo;
-            _courseRepo = courseRepo;
             _deptRepo = deptRepo;
             _traineeRepo = traineeRepo;
             _unitOfWork = unitOfWork;
@@ -35,6 +34,7 @@
                 Address = tr.Address,
                 Grade = tr.Grade,
                 ImageURL = tr.ImageURL,
+                Picture = tr.Picture,
                 DepartmentName = tr.Department.Name
             })
             .ToList();
@@ -62,7 +62,8 @@
                     Address = traineeRequest.Address,
                     DeptID = traineeRequest.DeptID,
                     Grade = traineeRequest.Grade,
-                    ImageURL = traineeRequest.ImageURL
+                    ImageURL = traineeRequest.ImageURL,
+                    Picture = traineeRequest.Picture,
                 };
 
                 _traineeRepo.Add(newTrainee);
@@ -85,7 +86,7 @@
                 Name = trainee.Name,
                 Address = trainee.Address,
                 Grade = trainee.Grade,
-                DepartmentName = trainee.Department.Name
+                DepartmentName = trainee.Department.Name,
             };
 
             return View(model);

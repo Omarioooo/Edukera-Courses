@@ -1,6 +1,8 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 namespace MVC_Demo.Controllers
 {
+    [Authorize]
     public class DepartmentController : Controller
     {
         private readonly IDepartmentRepository _deptRepo;
@@ -9,9 +11,13 @@ namespace MVC_Demo.Controllers
         private readonly ICourseRepository _courseRepo;
         private readonly IUnitOfWork _unitOfWork;
 
-        public DepartmentController(IDepartmentRepository deptRepo, IUnitOfWork unitOfWork)
+        public DepartmentController(IDepartmentRepository deptRepo, IUnitOfWork unitOfWork, IInstructorRepository instructorRepository,
+                                    ITraineeRepository traineeRepository, ICourseRepository courseRepository)
         {
             _deptRepo = deptRepo;
+            _instructorRepo = instructorRepository;
+            _courseRepo = courseRepository;
+            _traineeRepo = traineeRepository;
             _unitOfWork = unitOfWork;
         }
 

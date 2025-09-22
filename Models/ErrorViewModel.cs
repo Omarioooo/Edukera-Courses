@@ -1,8 +1,8 @@
-namespace MVC_Demo.Models
+﻿namespace MVC_Demo.Models
 {
     public class ErrorViewModel
     {
-        public string? RequestId { get; set; }
+        public string RequestId { get; set; }
 
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
     }

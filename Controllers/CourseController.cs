@@ -1,5 +1,8 @@
-﻿namespace MVC_Demo.Controllers
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace MVC_Demo.Controllers
 {
+    [Authorize]
     public class CourseController : Controller
     {
 

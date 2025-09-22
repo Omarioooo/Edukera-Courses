@@ -1,4 +1,4 @@
-﻿@model TraineeFormViewModel
+﻿@model ViewModels.TraineeFormViewModel
 @{
     ViewData["Title"] = "Add Trainee";
     var grades = new SelectList(
@@ -51,14 +51,14 @@
 
                     <div class="mb-3">
                         <!-- Label bound to the imageFile property -->
-                        <label asp-for="imageFile" class="form-label">Upload Image</label>
+                        <label asp-for="Picture" class="form-label">Upload Image</label>
 
                         <!-- Drag & Drop area -->
                         <div id="drop-area" class="border border-2 p-3 text-center rounded">
                             <p>Drag & Drop an image here or click to select</p>
 
                             <!-- Hidden file input bound to imageFile -->
-                            <input asp-for="imageFile" type="file" id="fileElem" accept="image/*" style="display:none" />
+                            <input asp-for="Picture" type="file" id="fileElem" accept="image/*" style="display:none" />
 
                             <!-- Button to open file dialog -->
                             <button type="button" class="btn btn-secondary" onclick="document.getElementById('fileElem').click();">
@@ -66,7 +66,7 @@
                             </button>
 
                             <!-- Error Validation -->
-                            <span asp-validation-for="imageFile" class="text-danger small"></span>
+                            <span asp-validation-for="Picture" class="text-danger small"></span>
                         </div>
 
                         <!-- Image preview after file selection -->

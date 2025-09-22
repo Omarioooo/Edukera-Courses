@@ -258,7 +258,6 @@ E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\rjimswa.dswa.cache.json
 E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
 E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
 E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\scopedcss\bundle\MVC-Demo.styles.css
-E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\compressed\ebgvtl4oh7-b9sayid5wm.gz
 E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\compressed\j7mdx47bdo-61n19gt1b8.gz
 E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\compressed\3bppzcr7u3-xtxxf3hu2r.gz
 E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\compressed\h6iwyjn6nv-bqjiyaj88i.gz
@@ -333,6 +332,12 @@ E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\MVC-Demo.genruntimeconfig.cache
 E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\ref\MVC-Demo.dll
 E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\compressed\1g8f8voqg7-devepoo3hg.gz
 E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\compressed\t0eqqt1ryy-z1gv136zx9.gz
-E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\compressed\ytm1lcntqk-69w57k644l.gz
 E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\MVC-Demo.sourcelink.json
 E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\compressed\os8w0fbj2q-95jsne1wtz.gz
+E:\Visual Studio\MVCs\MVC-Demo\bin\Debug\net9.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+E:\Visual Studio\MVCs\MVC-Demo\bin\Debug\net9.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+E:\Visual Studio\MVCs\MVC-Demo\bin\Debug\net9.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+E:\Visual Studio\MVCs\MVC-Demo\bin\Debug\net9.0\Microsoft.Extensions.Identity.Core.dll
+E:\Visual Studio\MVCs\MVC-Demo\bin\Debug\net9.0\Microsoft.Extensions.Identity.Stores.dll
+E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\compressed\ebgvtl4oh7-ity7khf31r.gz
+E:\Visual Studio\MVCs\MVC-Demo\obj\Debug\net9.0\compressed\ytm1lcntqk-pgrahioyo3.gz

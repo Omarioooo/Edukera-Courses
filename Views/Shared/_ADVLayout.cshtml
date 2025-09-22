@@ -29,7 +29,13 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" asp-action="Index" asp-controller="Home">Home</a></li>
                     <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" asp-action="Index" asp-controller="Home" asp-fragment="#contact">Contact</a></li>
+                    <li class="nav-item mx-0 mx-lg-1 ProfileText"><a class="nav-link py-3 px-0 px-lg-3 rounded" asp-action="ProfileHomePage" asp-controller="Profile">Profile</a></li>
                 </ul>
+                <div class="ms-3">
+                    <a asp-controller="Profile" asp-action="ProfileHomePage" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-user-circle fa-lg me-1 ProfileIcon" style="color: white; font-size: 37px"></i>
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
